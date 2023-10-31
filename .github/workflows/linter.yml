@@ -1,6 +1,9 @@
-name: Super-Linter
+name: Super-Linter and Docker Image Push
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   super-lint:
@@ -14,3 +17,18 @@ jobs:
         uses: github/super-linter@v4
         env:
           DEFAULT_BRANCH: main
+
+  push-docker-image:
+    name: Push Docker Image to Docker Hub
+    runs-on: ubuntu-latest
+    needs: super-lint  # Make sure to wait for the previous job to complete
+
+    steps:
+      - name: Login to Docker Hub
+        run: docker login -u mdhussain284 -p Hussain@2844
+
+      - name: Push Docker Image
+        run: docker push mdhussain284/gitops:latest  # Replace with your image name
+
+      - name: Logout from Docker Hub
+        run: docker logout
